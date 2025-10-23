@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Duck Shop</title>
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #00cfff, #ffde00);
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+h1 { margin: 20px 0; font-size: 3rem; color: #fff; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); }
+.balance-bar {
+  background: white;
+  border-radius: 15px;
+  padding: 15px 25px;
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ff69b4;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+#filters { margin-bottom: 20px; }
+#filters select, #filters input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  margin: 0 5px;
+}
+.shop {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+.item {
+  background: white;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+.item:hover { transform: translateY(-5px); }
+.item img { width: 100%; border-radius: 10px; }
+.item h3 { margin: 10px 0 5px; }
+.item p { margin: 5px 0; font-weight: bold; color: #ff69b4; }
+button { background: #ff69b4; border: none; color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; margin-top: 5px; transition: 0.3s; }
+button:hover { background: #ff1493; }
+
+/* Cart section */
+#cart-section {
+  background: rgba(255,255,255,0.9);
+  margin: 30px auto;
+  padding: 20px;
+  max-width: 1000px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+#cart-section h2 { color: #ff69b4; }
+.cart-item { display: flex; align-items: center; margin: 15px 0; justify-content: space-between; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+.cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; }
+.cart-item-info { flex: 1; margin-left: 15px; text-align: left; }
+</style>
+</head>
+<body>
+
+<h1>🦆 Duck Shop</h1>
+<div class="balance-bar">
+  User: <span id="username-display">Guest</span> | Balance: <span id="balance">0.00</span> RB Bucks
+</div>
+
+<div id="filters">
+  <select id="category-filter" onchange="filterItems()">
+    <option value="All">All Categories</option>
+    <option value="Fantasy">Fantasy Ducks</option>
+    <option value="Regular">Regular Ducks</option>
+    <option value="Special">Special Ducks</option>
+  </select>
+  <input type="text" id="search-bar" placeholder="Search Duck..." oninput="filterItems()">
+</div>
+
+<div class="shop" id="shop-items"></div>
+
+<div id="cart-section">
+  <h2>🛒 Cart</h2>
+  <div id="cart-items"></div>
+  <p>Total: <span id="cart-total">0.00</span> RB Bucks</p>
+</div>
+
+<script>
+let user = localStorage.getItem('rb_current_user');
+let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
+let cart = JSON.parse(localStorage.getItem('rb_cart') || '[]');
+
+const items = [
+  {name:'Golden Duck', price:50, img:'https://i.imgur.com/OdL0XPt.png', category:'Regular'},
+  {name:'Rubber Duck', price:20, img:'https://i.imgur.com/9YzZ6hK.png', category:'Regular'},
+  {name:'Duck Plush', price:35, img:'https://i.imgur.com/Ji5vZ3S.png', category:'Regular'},
+  {name:'Galaxy Duck', price:100, img:'https://i.imgur.com/ZlY1cM1.png', category:'Fantasy'},
+  {name:'King Duck', price:150, img:'https://i.imgur.com/3rY8uMC.png', category:'Fantasy'},
+  {name:'Rainbow Duck', price:75, img:'https://i.imgur.com/L5W1K1U.png', category:'Fantasy'},
+  {name:'Cyber Duck', price:120, img:'https://i.imgur.com/J9kNQ0c.png', category:'Fantasy'},
+  {name:'Pirate Duck', price:80, img:'https://i.imgur.com/3DxY3x5.png', category:'Special'},
+  {name:'Fire Duck', price:60, img:'https://i.imgur.com/w6y9r0K.png', category:'Special'},
+  {name:'Ice Duck', price:60, img:'https://i.imgur.com/j4Ud9kW.png', category:'Special'}
+];
+
+// Display balance
+function updateBalance() {
+  users = JSON.parse(localStorage.getItem('rb_users') || '{}');
+  if (user && users[user]) {
+    document.getElementById('username-display').textContent = user;
+    document.getElementById('balance').textContent = users[user].balance.toFixed(2);
+  }
+}
+
+// Render shop items
+function renderShop(filteredItems = items) {
+  const shopDiv = document.getElementById('shop-items');
+  shopDiv.innerHTML = '';
+  filteredItems.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.classList.add('item');
+    div.innerHTML = `
+      <img src="${item.img}" alt="${item.name}">
+      <h3>${item.name}</h3>
+      <p>${item.price.toFixed(2)} RB Bucks</p>
+      <button onclick="addToCart(${items.indexOf(item)})">Add to Cart</button>
+    `;
+    shopDiv.appendChild(div);
+  });
+}
+
+// Add to cart
+function addToCart(index) {
+  cart.push(items[index]);
+  localStorage.setItem('rb_cart', JSON.stringify(cart));
+  renderCart();
+}
+
+// Render cart
+function renderCart() {
+  const cartDiv = document.getElementById('cart-items');
+  cartDiv.innerHTML = '';
+  let total = 0;
+  cart.forEach((item, idx) => {
+    total += item.price;
+    const div = document.createElement('div');
+    div.classList.add('cart-item');
+    div.innerHTML = `
+      <img src="${item.img}" alt="${item.name}">
+      <div class="cart-item-info">
+        <strong>${item.name}</strong><br>
+        Price: ${item.price.toFixed(2)} RB Bucks
+      </div>
+      <button onclick="purchaseItem(${idx})">Purchase</button>
+    `;
+    cartDiv.appendChild(div);
+  });
+  document.getElementById('cart-total').textContent = total.toFixed(2);
+}
+
+// Purchase
+function purchaseItem(idx) {
+  if (!user || !users[user]) { alert("Please log in via RB Bucks first."); return; }
+  const item = cart[idx];
+  if (users[user].balance < item.price) { alert("Not enough RB Bucks!"); return; }
+
+  users[user].balance -= item.price;
+  localStorage.setItem('rb_users', JSON.stringify(users));
+  cart.splice(idx,1);
+  localStorage.setItem('rb_cart', JSON.stringify(cart));
+  updateBalance();
+  renderCart();
+  alert(`You purchased ${item.name} for ${item.price.toFixed(2)} RB Bucks!`);
+}
+
+// Filter items
+function filterItems() {
+  const category = document.getElementById('category-filter').value;
+  const search = document.getElementById('search-bar').value.toLowerCase();
+  const filtered = items.filter(item => 
+    (category==='All' || item.category===category) &&
+    item.name.toLowerCase().includes(search)
+  );
+  renderShop(filtered);
+}
+
+// Initialize
+window.onload = function() {
+  updateBalance();
+  renderShop();
+  renderCart();
+}
+
+// Auto-update balance
+setInterval(updateBalance, 2000);
+</script>
+</body>
+</html>
