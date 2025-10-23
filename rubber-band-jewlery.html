@@ -1,148 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rubber Band Jewelry</title>
 <style>
-body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg,#ffb6c1,#ffd700); margin:0; color:#333; }
-header { text-align:center; background:#ff69b4; color:white; padding:2rem 0; box-shadow:0 4px 10px rgba(0,0,0,0.2); position:sticky; top:0; z-index:100; }
-header h1 { font-size:2.5rem; margin:0; letter-spacing:2px; }
-.cart-button { position:absolute; top:20px; right:20px; background:white; color:#ff69b4; border:none; border-radius:50px; padding:10px 20px; cursor:pointer; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.2); transition:0.3s; }
-.cart-button:hover { background:#ffe4ec; }
-main { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; padding:30px; max-width:1200px; margin:auto; }
+body { font-family:'Poppins', sans-serif; background: linear-gradient(135deg, #ffb6c1, #ffd700); margin:0; color:#333; }
+header { text-align:center; background:#ff69b4; color:white; padding:2rem 0; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
+header h1 { font-size:2.5rem; margin:0; }
+main { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px; padding:30px; max-width:1200px; margin:auto; }
 .product { background:white; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.1); overflow:hidden; text-align:center; transition: transform 0.2s, box-shadow 0.2s; }
 .product:hover { transform:translateY(-5px); box-shadow:0 6px 20px rgba(0,0,0,0.2); }
 .product img { width:100%; height:220px; object-fit:cover; }
 .product h2 { font-size:1.3rem; margin:10px 0 5px; }
 .price { font-weight:bold; color:#ff69b4; font-size:1.1rem; }
-button { background:#ff69b4; border:none; color:white; padding:10px 20px; border-radius:25px; cursor:pointer; margin:10px 0 20px; transition:background 0.3s; }
+button { background:#ff69b4; border:none; color:white; padding:10px 20px; border-radius:25px; cursor:pointer; margin:10px 0 20px; transition: background 0.3s; }
 button:hover { background:#ff1493; }
-footer { text-align:center; padding:15px; background:#ff69b4; color:white; margin-top:30px; box-shadow:0 -4px 10px rgba(0,0,0,0.1); }
-
-.cart-popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); width:90%; max-width:500px; background:white; border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,0.3); z-index:200; transition: transform 0.3s ease; padding:20px; }
-.cart-popup.active { transform:translate(-50%,-50%) scale(1); }
-.cart-popup h3 { text-align:center; color:#ff69b4; margin-top:0; }
-.cart-items { max-height:250px; overflow-y:auto; margin-bottom:15px; }
-.cart-item { display:flex; justify-content:space-between; border-bottom:1px solid #ddd; padding:8px 0; }
-.cart-total { text-align:center; font-weight:bold; margin:10px 0; }
-.cart-popup button { display:inline-block; margin:5px; padding:10px 15px; border-radius:10px; font-size:0.9rem; }
-.checkout { background:#ff69b4; color:white; }
-.close-cart { background:#ccc; color:#333; }
-.clear-cart { background:#ff9999; color:white; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Rubber Band Jewelry</h1>
-  <p>Handmade Jewelry from Colorful Rubber Bands</p>
-  <button class="cart-button" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
+<h1>Rubber Band Jewelry</h1>
+<p>Handmade Jewelry from Colorful Rubber Bands</p>
 </header>
 
 <main id="product-list">
+  <!-- Bracelets -->
   <div class="product" data-name="Rainbow Twist Bracelet" data-price="1.50">
     <img src="https://images.unsplash.com/photo-1604079625879-3e8e84b4e5a1?auto=format&fit=crop&w=800&q=80" alt="Rainbow Bracelet">
     <h2>Rainbow Twist Bracelet</h2>
     <p class="price">$1.50</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
+
   <div class="product" data-name="Pink Heart Bracelet" data-price="1.50">
     <img src="https://images.unsplash.com/photo-1564594153215-1dba6aa8aab5?auto=format&fit=crop&w=800&q=80" alt="Pink Bracelet">
     <h2>Pink Heart Bracelet</h2>
     <p class="price">$1.50</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Neon Loop Earrings" data-price="2.00">
-    <img src="https://images.unsplash.com/photo-1583744946564-b52ac18b49ae?auto=format&fit=crop&w=800&q=80" alt="Neon Earrings">
-    <h2>Neon Loop Earrings</h2>
-    <p class="price">$2.00</p>
+
+  <div class="product" data-name="Blue Wave Bracelet" data-price="1.50">
+    <img src="https://images.unsplash.com/photo-1589367924852-7b5bfaa3b67c?auto=format&fit=crop&w=800&q=80" alt="Blue Bracelet">
+    <h2>Blue Wave Bracelet</h2>
+    <p class="price">$1.50</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
+
+  <div class="product" data-name="Neon Glow Bracelet" data-price="1.50">
+    <img src="https://images.unsplash.com/photo-1583744946564-b52ac18b49ae?auto=format&fit=crop&w=800&q=80" alt="Neon Bracelet">
+    <h2>Neon Glow Bracelet</h2>
+    <p class="price">$1.50</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <!-- Earrings -->
   <div class="product" data-name="Rainbow Drop Earrings" data-price="2.00">
     <img src="https://images.unsplash.com/photo-1616627457058-b46bbf234d38?auto=format&fit=crop&w=800&q=80" alt="Rainbow Earrings">
     <h2>Rainbow Drop Earrings</h2>
     <p class="price">$2.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
+
+  <div class="product" data-name="Neon Loop Earrings" data-price="2.00">
+    <img src="https://images.unsplash.com/photo-1583744946564-b52ac18b49ae?auto=format&fit=crop&w=800&q=80" alt="Neon Earrings">
+    <h2>Neon Loop Earrings</h2>
+    <p class="price">$2.00</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <div class="product" data-name="Heart Hoop Earrings" data-price="2.00">
+    <img src="https://images.unsplash.com/photo-1616627457058-b46bbf234d39?auto=format&fit=crop&w=800&q=80" alt="Heart Earrings">
+    <h2>Heart Hoop Earrings</h2>
+    <p class="price">$2.00</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <div class="product" data-name="Star Charm Earrings" data-price="2.00">
+    <img src="https://images.unsplash.com/photo-1616627457058-b46bbf234d40?auto=format&fit=crop&w=800&q=80" alt="Star Earrings">
+    <h2>Star Charm Earrings</h2>
+    <p class="price">$2.00</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <!-- Necklaces -->
   <div class="product" data-name="Blue Wave Necklace" data-price="2.00">
     <img src="https://images.unsplash.com/photo-1589367924852-7b5bfaa3b67c?auto=format&fit=crop&w=800&q=80" alt="Blue Necklace">
     <h2>Blue Wave Necklace</h2>
     <p class="price">$2.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
+
   <div class="product" data-name="Purple Charm Necklace" data-price="2.00">
     <img src="https://images.unsplash.com/photo-1611826961007-ff7b9c6bfc78?auto=format&fit=crop&w=800&q=80" alt="Purple Necklace">
     <h2>Purple Charm Necklace</h2>
     <p class="price">$2.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
+
+  <div class="product" data-name="Rainbow Heart Necklace" data-price="2.00">
+    <img src="https://images.unsplash.com/photo-1611826961007-ff7b9c6bfc79?auto=format&fit=crop&w=800&q=80" alt="Rainbow Necklace">
+    <h2>Rainbow Heart Necklace</h2>
+    <p class="price">$2.00</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <div class="product" data-name="Star Charm Necklace" data-price="2.00">
+    <img src="https://images.unsplash.com/photo-1611826961007-ff7b9c6bfc80?auto=format&fit=crop&w=800&q=80" alt="Star Necklace">
+    <h2>Star Charm Necklace</h2>
+    <p class="price">$2.00</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
 </main>
 
-<div class="cart-popup" id="cart-popup">
-  <h3>Your Cart</h3>
-  <div class="cart-items" id="cart-items"></div>
-  <p class="cart-total" id="cart-total">Total: $0.00</p>
-  <div style="text-align:center;">
-    <button class="close-cart" onclick="toggleCart()">Close</button>
-    <button class="clear-cart" onclick="clearCart()">Clear</button>
-    <button class="checkout" onclick="checkout()">Checkout</button>
-  </div>
-</div>
-
 <script>
-// RB Bucks integration
-let cart = [];
-let user = localStorage.getItem('rb_current_user') || 'Guest';
-let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
-if(!users[user]) users[user] = { balance: 100 };
-if(!users['rb_owner']) users['rb_owner'] = { balance: 0 };
-localStorage.setItem('rb_users', JSON.stringify(users));
-
+// Add to Cart connected to DuckCoin wallet
 function addToCart(button){
   const product = button.closest('.product');
   const name = product.dataset.name;
   const price = parseFloat(product.dataset.price);
-  cart.push({ name, price });
-  updateCartDisplay();
+
+  let walletUsers = JSON.parse(localStorage.getItem('duckUsers')) || {};
+  let currentUser = localStorage.getItem('duckCurrentUser') || 'defaultUser';
+  if(currentUser && walletUsers[currentUser]){
+    if(walletUsers[currentUser].balance >= price){
+      walletUsers[currentUser].balance -= price;
+      walletUsers[currentUser].history.push({type:`Purchased ${name} (RBJ)`, amount:-price, time:new Date().toLocaleString()});
+      localStorage.setItem('duckUsers', JSON.stringify(walletUsers));
+      alert(`${name} purchased!`);
+    } else {
+      alert("Insufficient DuckCoins!");
+    }
+  }
 }
-
-function updateCartDisplay(){
-  const cartCount = document.getElementById('cart-count');
-  const cartItems = document.getElementById('cart-items');
-  const cartTotal = document.getElementById('cart-total');
-  cartCount.textContent = cart.length;
-  cartItems.innerHTML = "";
-  let total = 0;
-  cart.forEach(item => {
-    total += item.price;
-    const div = document.createElement('div');
-    div.classList.add('cart-item');
-    div.innerHTML = `<span>${item.name}</span><span>$${item.price.toFixed(2)}</span>`;
-    cartItems.appendChild(div);
-  });
-  cartTotal.textContent = "Total: $" + total.toFixed(2);
-}
-
-function toggleCart(){ document.getElementById('cart-popup').classList.toggle('active'); }
-function clearCart(){ cart=[]; updateCartDisplay(); }
-
-function checkout(){
-  if(cart.length===0){ alert("Cart empty!"); return; }
-  users = JSON.parse(localStorage.getItem('rb_users'));
-  let total = cart.reduce((a,b)=>a+b.price,0);
-  if(users[user].balance < total){ alert("Insufficient RB Bucks!"); return; }
-  users[user].balance -= total;
-  users['rb_owner'].balance += total;
-  localStorage.setItem('rb_users', JSON.stringify(users));
-  alert(`Purchase successful! $${total.toFixed(2)} deducted from your RB Bucks.`);
-  cart=[];
-  updateCartDisplay();
-}
-
-setInterval(()=>{
-  users = JSON.parse(localStorage.getItem('rb_users'));
-},2000);
 </script>
 
 </body>
