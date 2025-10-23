@@ -1,174 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RB Bucks Wallet</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #ff69b4, #ffd700);
-      color: #333;
-      margin: 0;
-      text-align: center;
-      padding: 40px;
-    }
-    h1 {
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    .wallet {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      max-width: 400px;
-      margin: 40px auto;
-      padding: 25px;
-    }
-    input, button {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      margin: 8px;
-      font-size: 1rem;
-    }
-    input {
-      border: 1px solid #ccc;
-      width: 80%;
-    }
-    button {
-      background: #ff69b4;
-      color: white;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #ff1493;
-    }
-    .balance {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-top: 10px;
-      color: #ff69b4;
-    }
-    footer {
-      margin-top: 40px;
-      color: white;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RB Bucks Wallet</title>
+<style>
+body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg,#ffb6c1,#ffd700); margin: 0; text-align: center; color: #333; }
+h1 { margin: 30px 0 10px; font-size: 3rem; color: #ff1493; }
+.balance { font-size: 2rem; margin: 20px 0; color: #fff; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); }
+.container { background: white; padding: 20px; border-radius: 15px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-bottom: 30px; min-width: 250px; }
+input, select { padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; margin: 5px; }
+button { background: #ff69b4; border: none; color: white; padding: 10px 20px; border-radius: 25px; cursor: pointer; margin: 10px; font-size: 1rem; }
+button:hover { background: #ff1493; }
+</style>
 </head>
 <body>
-  <h1>💸 RB Bucks Wallet</h1>
 
-  <div class="wallet">
-    <div id="login-section">
-      <p>Enter your username to start:</p>
-      <input type="text" id="username" placeholder="Username" />
-      <br>
-      <button onclick="login()">Start Wallet</button>
-    </div>
+<h1>💰 RB Bucks Wallet</h1>
+<div class="container">
+  <p>User: <span id="username-display">Guest</span></p>
+  <p>Balance: <span id="balance">0.00</span> RB Bucks</p>
+</div>
 
-    <div id="wallet-section" style="display:none;">
-      <h2>Welcome, <span id="user-name"></span>!</h2>
-      <p class="balance">Balance: <span id="balance">0</span> RB Bucks</p>
+<div class="container">
+  <h2>Send RB Bucks</h2>
+  <input type="text" id="send-to" placeholder="Recipient Username">
+  <input type="number" id="send-amount" placeholder="Amount" min="1">
+  <button onclick="sendRB()">Send</button>
+</div>
 
-      <h3>Send RB Bucks</h3>
-      <input type="text" id="send-to" placeholder="Recipient username">
-      <input type="number" id="amount" placeholder="Amount" min="1" step="0.01">
-      <br>
-      <button onclick="sendMoney()">Send</button>
-      <button onclick="addMoney()">Add +10 RB Bucks (test)</button>
-    </div>
-  </div>
+<script>
+// Initialize users and balances
+let user = localStorage.getItem('rb_current_user') || 'Guest';
+let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
 
-  <footer>Connected to Rubber Band Jewelry 💖</footer>
+// Ensure default balances
+if(!users[user]) users[user] = { balance: 100 };
+if(!users['rb_owner']) users['rb_owner'] = { balance: 0 }; // earnings from shops
+localStorage.setItem('rb_users', JSON.stringify(users));
 
-  <script>
-    let user = null;
-
-    function login() {
-      const username = document.getElementById('username').value.trim();
-      if (!username) {
-        alert("Please enter a username.");
-        return;
-      }
-
-      let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
-
-      if (!users[username]) {
-        users[username] = { balance: 100 }; // starting balance
-        alert("Welcome new user! You received 100 RB Bucks.");
-      }
-
-      user = username;
-      localStorage.setItem('rb_users', JSON.stringify(users));
-      localStorage.setItem('rb_current_user', user);
-
-      document.getElementById('login-section').style.display = "none";
-      document.getElementById('wallet-section').style.display = "block";
-      document.getElementById('user-name').textContent = user;
-      updateBalance();
+function updateBalance(){
+    users = JSON.parse(localStorage.getItem('rb_users') || '{}');
+    
+    // Automatically transfer shop earnings to your balance
+    if(users['rb_owner'].balance > 0){
+        users[user].balance += users['rb_owner'].balance;
+        users['rb_owner'].balance = 0;
+        localStorage.setItem('rb_users', JSON.stringify(users));
     }
 
-    function updateBalance() {
-      let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
-      if (user && users[user]) {
-        document.getElementById('balance').textContent = users[user].balance.toFixed(2);
-      }
-    }
+    // Update display
+    document.getElementById('username-display').textContent = user;
+    document.getElementById('balance').textContent = (users[user].balance || 0).toFixed(2);
+}
 
-    function sendMoney() {
-      let sendTo = document.getElementById('send-to').value.trim();
-      let amount = parseFloat(document.getElementById('amount').value);
+// Send RB Bucks to anyone
+function sendRB(){
+    const recipient = document.getElementById('send-to').value.trim();
+    const amount = parseFloat(document.getElementById('send-amount').value);
+    users = JSON.parse(localStorage.getItem('rb_users') || '{}');
 
-      if (!sendTo || isNaN(amount) || amount <= 0) {
-        alert("Please enter valid recipient and amount.");
-        return;
-      }
+    if(!recipient || !users[recipient]) { alert("Recipient not found."); return; }
+    if(isNaN(amount) || amount <= 0) { alert("Enter a valid amount."); return; }
+    if(users[user].balance < amount) { alert("Insufficient balance."); return; }
 
-      let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
+    users[user].balance -= amount;
+    users[recipient].balance += amount;
+    localStorage.setItem('rb_users', JSON.stringify(users));
+    updateBalance();
+    alert(`Sent ${amount.toFixed(2)} RB Bucks to ${recipient}`);
+}
 
-      if (!users[user] || users[user].balance < amount) {
-        alert("Not enough RB Bucks!");
-        return;
-      }
+// Initialize and auto-refresh every 2 seconds
+window.onload = updateBalance;
+setInterval(updateBalance, 2000);
+</script>
 
-      if (!users[sendTo]) {
-        users[sendTo] = { balance: 100 }; // auto-create recipient
-        alert("New user created for recipient with 100 RB Bucks starting balance.");
-      }
-
-      users[user].balance -= amount;
-      users[sendTo].balance += amount;
-      localStorage.setItem('rb_users', JSON.stringify(users));
-
-      alert(`You sent ${amount.toFixed(2)} RB Bucks to ${sendTo}!`);
-      updateBalance();
-    }
-
-    function addMoney() {
-      let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
-      users[user].balance += 10;
-      localStorage.setItem('rb_users', JSON.stringify(users));
-      updateBalance();
-    }
-
-    // 🔄 Auto-refresh balance every 2 seconds
-    setInterval(() => {
-      if (user) updateBalance();
-    }, 2000);
-
-    // Auto-login if user already saved
-    window.onload = function() {
-      const current = localStorage.getItem('rb_current_user');
-      if (current) {
-        user = current;
-        document.getElementById('login-section').style.display = "none";
-        document.getElementById('wallet-section').style.display = "block";
-        document.getElementById('user-name').textContent = user;
-        updateBalance();
-      }
-    };
-  </script>
 </body>
 </html>
