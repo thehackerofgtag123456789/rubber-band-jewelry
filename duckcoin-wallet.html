@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DuckCoin Wallet</title>
+<style>
+body { font-family: 'Poppins',sans-serif; background: linear-gradient(135deg,#ffb6c1,#ffd700); margin:0; color:#333; }
+header { text-align:center; padding:2rem; background:#ff69b4; color:white; }
+header h1 { margin:0; }
+.wallet { max-width:800px; margin:auto; padding:20px; background:white; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
+button { background:#ff69b4; color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer; margin:5px; }
+button:disabled { background:#ff9999; cursor:default; }
+.section { margin-bottom:20px; }
+#purchase-history { max-height:200px; overflow-y:auto; border:1px solid #ddd; padding:10px; border-radius:10px; background:#fff0f5; }
+input[type="number"], input[type="text"], input[type="password"] { padding:5px; margin-right:5px; border-radius:5px; border:1px solid #ccc; }
+</style>
+</head>
+<body>
+
+<header>
+<h1>DuckCoin Wallet</h1>
+<p>Your account for Duck Shop, RBJ & Dayims Gambling</p>
+</header>
+
+<div class="wallet">
+
+<div id="login-section">
+<h2>Login</h2>
+<input type="text" id="login-username" placeholder="Username">
+<input type="password" id="login-password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="showRegister()">Register</button>
+</div>
+
+<div id="register-section" style="display:none;">
+<h2>Register</h2>
+<input type="text" id="register-username" placeholder="Username">
+<input type="password" id="register-password" placeholder="Password">
+<button onclick="register()">Register</button>
+<button onclick="hideRegister()">Back to Login</button>
+</div>
+
+<div id="wallet-section" style="display:none;">
+<h2>Welcome, <span id="user-name"></span>!</h2>
+<p>Balance: <span id="balance">0</span> DuckCoins</p>
+
+<div class="section">
+<h3>Daily Reward</h3>
+<button id="daily-reward-btn" onclick="claimDaily()">Claim +10 DuckCoins</button>
+<span id="daily-cooldown"></span>
+</div>
+
+<div class="section">
+<h3>Job App</h3>
+<button id="work-btn" onclick="workJob()">Work +5 DuckCoins</button>
+<span id="work-cooldown"></span>
+</div>
+
+<div class="section">
+<h3>Send DuckCoins</h3>
+<input type="text" id="send-username" placeholder="Recipient Username">
+<input type="number" id="send-amount" placeholder="Amount">
+<button onclick="sendCoins()">Send</button>
+</div>
+
+<div class="section">
+<h3>Purchase / Activity History</h3>
+<div id="purchase-history"></div>
+</div>
+
+<div class="section">
+<button onclick="logout()">Logout</button>
+</div>
+
+</div>
+</div>
+
+<script>
+// Users
+let users = JSON.parse(localStorage.getItem('duckUsers')) || {};
+let currentUser = localStorage.getItem('duckCurrentUser') || null;
+let lastDaily=0, lastWork=0;
+
+function saveUsers(){ localStorage.setItem('duckUsers', JSON.stringify(users)); }
+function showRegister(){ document.getElementById('login-section').style.display='none'; document.getElementById('register-section').style.display='block'; }
+function hideRegister(){ document.getElementById('login-section').style.display='block'; document.getElementById('register-section').style.display='none'; }
+
+function register(){
+  let u=document.getElementById('register-username').value.trim();
+  let p=document.getElementById('register-password').value;
+  if(!u||!p){ alert('Enter username and password'); return; }
+  if(users[u]){ alert('Username taken'); return; }
+  users[u]={password:p,balance:100,history:[]};
+  saveUsers();
+  currentUser=u;
+  localStorage.setItem('duckCurrentUser', u);
+  showWallet();
+}
+
+function login(){
+  let u=document.getElementById('login-username').value.trim();
+  let p=document.getElementById('login-password').value;
+  if(users[u] && users[u].password===p){
+    currentUser=u;
+    localStorage.setItem('duckCurrentUser', u);
+    showWallet();
+  } else { alert('Invalid login'); }
+}
+
+function logout(){
+  currentUser=null;
+  localStorage.removeItem('duckCurrentUser');
+  document.getElementById('wallet-section').style.display='none';
+  document.getElementById('login-section').style.display='block';
+}
+
+function showWallet(){
+  document.getElementById('login-section').style.display='none';
+  document.getElementById('register-section').style.display='none';
+  document.getElementById('wallet-section').style.display='block';
+  document.getElementById('user-name').innerText=currentUser;
+  updateBalance();
+  updateHistory();
+}
+
+// Update functions
+function updateBalance(){ document.getElementById('balance').innerText=users[currentUser].balance.toFixed(2); }
+function updateHistory(){
+  let hist=document.getElementById('purchase-history'); hist.innerHTML='';
+  users[currentUser].history.forEach(h=>{
+    if(!h.type.includes("Dayims")){
+      let div=document.createElement('div');
+      div.textContent=`[${h.time}] ${h.type}: ${h.amount} DuckCoins`;
+      hist.appendChild(div);
+    }
+  });
+}
+
+// Daily Reward
+function claimDaily(){
+  let now=Date.now();
+  if(now-lastDaily<24*60*60*1000){ alert('Daily reward already claimed'); return; }
+  users[currentUser].balance+=10;
+  users[currentUser].history.push({type:'Daily Reward',amount:10,time:new Date().toLocaleString()});
+  lastDaily=now; saveUsers(); updateBalance(); updateHistory();
+}
+
+// Work Job with cooldown 60s
+function workJob(){
+  let now=Date.now();
+  if(now-lastWork<60000){ alert('Job on cooldown'); return; }
+  users[currentUser].balance+=5;
+  users[currentUser].history.push({type:'Worked for Coins',amount:5,time:new Date().toLocaleString()});
+  lastWork=now; saveUsers(); updateBalance(); updateHistory();
+}
+
+// Send Coins
+function sendCoins(){
+  let to=document.getElementById('send-username').value.trim();
+  let amt=parseFloat(document.getElementById('send-amount').value);
+  if(!users[to]){ alert('User not found'); return; }
+  if(amt<=0||users[currentUser].balance<amt){ alert('Insufficient balance'); return; }
+  users[currentUser].balance-=amt;
+  users[to].balance+=amt;
+  users[currentUser].history.push({type:`Sent to ${to}`, amount:-amt, time:new Date().toLocaleString()});
+  users[to].history.push({type:`Received from ${currentUser}`, amount:amt, time:new Date().toLocaleString()});
+  saveUsers(); updateBalance(); updateHistory();
+}
+
+// Auto-update balance and history every second
+setInterval(() => {
+  if(currentUser && users[currentUser]){
+    updateBalance();
+    updateHistory();
+  }
+}, 1000);
+
+// Auto-login
+if(currentUser && users[currentUser]){ showWallet(); } else { currentUser=null; localStorage.removeItem('duckCurrentUser'); }
+</script>
+
+</body>
+</html>
