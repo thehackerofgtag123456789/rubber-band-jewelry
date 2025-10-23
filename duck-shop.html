@@ -5,210 +5,157 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Duck Shop</title>
 <style>
-body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg,#a0e0ff,#fff); margin:0; text-align:center; color:#333; }
-header { background:#00bfff; color:white; padding:2rem; }
-main { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; padding:20px; max-width:1200px; margin:auto; }
-.product { background:white; border-radius:15px; text-align:center; padding:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-.product img { width:100px; height:100px; object-fit:cover; margin-bottom:10px; }
-button { cursor:pointer; padding:10px 15px; border-radius:10px; margin:5px; background:#00bfff; color:white; border:none; }
-button:hover { background:#0099e6; }
-.cart-popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); background:white; padding:20px; border-radius:15px; transition:0.3s; z-index:100; width:90%; max-width:500px; }
-.cart-popup.active { transform:translate(-50%,-50%) scale(1); }
-.cart-item { display:flex; justify-content:space-between; border-bottom:1px solid #ddd; padding:5px 0; }
-#cart-total { font-weight:bold; margin-top:10px; }
+body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #ffebcd, #ffe4b5); margin:0; color:#333; }
+header { text-align:center; background:#ff69b4; color:white; padding:2rem 0; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
+header h1 { margin:0; }
+main { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px; padding:30px; max-width:1200px; margin:auto; }
+.product { background:white; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.1); overflow:hidden; text-align:center; transition: transform 0.2s, box-shadow 0.2s; }
+.product:hover { transform:translateY(-5px); box-shadow:0 6px 20px rgba(0,0,0,0.2); }
+.product img { width:100%; height:220px; object-fit:cover; }
+.product h2 { font-size:1.3rem; margin:10px 0 5px; }
+.price { font-weight:bold; color:#ff69b4; font-size:1.1rem; }
+button { background:#ff69b4; border:none; color:white; padding:10px 20px; border-radius:25px; cursor:pointer; margin:10px 0 20px; transition: background 0.3s; }
+button:hover { background:#ff1493; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Duck Shop</h1>
-  <button onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
+<h1>Duck Shop</h1>
+<p>Buy your favorite ducks using RB Bucks!</p>
 </header>
 
 <main id="product-list">
-  <!-- 20+ duck products -->
-  <div class="product" data-name="Galaxy Duck" data-price="5">
-    <img src="https://i.imgur.com/6w0I9j2.png" alt="Galaxy Duck">
+  <div class="product" data-name="Galaxy Duck" data-price="5.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07a5?auto=format&fit=crop&w=800&q=80" alt="Galaxy Duck">
     <h2>Galaxy Duck</h2>
-    <p>$5</p>
+    <p class="price">$5.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="King Duck" data-price="10">
-    <img src="https://i.imgur.com/OoZblJq.png" alt="King Duck">
+
+  <div class="product" data-name="King Duck" data-price="7.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07a6?auto=format&fit=crop&w=800&q=80" alt="King Duck">
     <h2>King Duck</h2>
-    <p>$10</p>
+    <p class="price">$7.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Fire Duck" data-price="8">
-    <img src="https://i.imgur.com/7vQx5Da.png" alt="Fire Duck">
-    <h2>Fire Duck</h2>
-    <p>$8</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Ice Duck" data-price="7">
-    <img src="https://i.imgur.com/Z7YQzZV.png" alt="Ice Duck">
-    <h2>Ice Duck</h2>
-    <p>$7</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Rainbow Duck" data-price="6">
-    <img src="https://i.imgur.com/5cLkQmX.png" alt="Rainbow Duck">
+
+  <div class="product" data-name="Rainbow Duck" data-price="3.50">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07a7?auto=format&fit=crop&w=800&q=80" alt="Rainbow Duck">
     <h2>Rainbow Duck</h2>
-    <p>$6</p>
+    <p class="price">$3.50</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Gold Duck" data-price="15">
-    <img src="https://i.imgur.com/0RzTJfY.png" alt="Gold Duck">
-    <h2>Gold Duck</h2>
-    <p>$15</p>
+
+  <div class="product" data-name="Fire Duck" data-price="6.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07a8?auto=format&fit=crop&w=800&q=80" alt="Fire Duck">
+    <h2>Fire Duck</h2>
+    <p class="price">$6.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Silver Duck" data-price="12">
-    <img src="https://i.imgur.com/2Cx1eHt.png" alt="Silver Duck">
-    <h2>Silver Duck</h2>
-    <p>$12</p>
+
+  <div class="product" data-name="Ice Duck" data-price="6.50">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07a9?auto=format&fit=crop&w=800&q=80" alt="Ice Duck">
+    <h2>Ice Duck</h2>
+    <p class="price">$6.50</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Neon Duck" data-price="9">
-    <img src="https://i.imgur.com/UPq8DdL.png" alt="Neon Duck">
-    <h2>Neon Duck</h2>
-    <p>$9</p>
+
+  <div class="product" data-name="Golden Duck" data-price="10.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07aa?auto=format&fit=crop&w=800&q=80" alt="Golden Duck">
+    <h2>Golden Duck</h2>
+    <p class="price">$10.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Zombie Duck" data-price="11">
-    <img src="https://i.imgur.com/mULCOzB.png" alt="Zombie Duck">
-    <h2>Zombie Duck</h2>
-    <p>$11</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Vampire Duck" data-price="13">
-    <img src="https://i.imgur.com/7dFQxHD.png" alt="Vampire Duck">
-    <h2>Vampire Duck</h2>
-    <p>$13</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Steampunk Duck" data-price="14">
-    <img src="https://i.imgur.com/h2vR1ZP.png" alt="Steampunk Duck">
-    <h2>Steampunk Duck</h2>
-    <p>$14</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Pirate Duck" data-price="12">
-    <img src="https://i.imgur.com/fhGQ4dL.png" alt="Pirate Duck">
-    <h2>Pirate Duck</h2>
-    <p>$12</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Cyber Duck" data-price="10">
-    <img src="https://i.imgur.com/WfM4EXO.png" alt="Cyber Duck">
-    <h2>Cyber Duck</h2>
-    <p>$10</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Firework Duck" data-price="9">
-    <img src="https://i.imgur.com/p9S6MPF.png" alt="Firework Duck">
-    <h2>Firework Duck</h2>
-    <p>$9</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Rainbow Ninja Duck" data-price="15">
-    <img src="https://i.imgur.com/xxrH3f1.png" alt="Rainbow Ninja Duck">
-    <h2>Rainbow Ninja Duck</h2>
-    <p>$15</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Crystal Duck" data-price="20">
-    <img src="https://i.imgur.com/4ZCJKwA.png" alt="Crystal Duck">
-    <h2>Crystal Duck</h2>
-    <p>$20</p>
-    <button onclick="addToCart(this)">Add to Cart</button>
-  </div>
-  <div class="product" data-name="Shadow Duck" data-price="18">
-    <img src="https://i.imgur.com/IU9zR7Q.png" alt="Shadow Duck">
+
+  <div class="product" data-name="Shadow Duck" data-price="4.50">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07ab?auto=format&fit=crop&w=800&q=80" alt="Shadow Duck">
     <h2>Shadow Duck</h2>
-    <p>$18</p>
+    <p class="price">$4.50</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Lightning Duck" data-price="17">
-    <img src="https://i.imgur.com/2kF9aKf.png" alt="Lightning Duck">
-    <h2>Lightning Duck</h2>
-    <p>$17</p>
+
+  <div class="product" data-name="Sunset Duck" data-price="5.50">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07ac?auto=format&fit=crop&w=800&q=80" alt="Sunset Duck">
+    <h2>Sunset Duck</h2>
+    <p class="price">$5.50</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Forest Duck" data-price="6">
-    <img src="https://i.imgur.com/3iUyO5E.png" alt="Forest Duck">
-    <h2>Forest Duck</h2>
-    <p>$6</p>
+
+  <div class="product" data-name="Neon Duck" data-price="6.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07ad?auto=format&fit=crop&w=800&q=80" alt="Neon Duck">
+    <h2>Neon Duck</h2>
+    <p class="price">$6.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
-  <div class="product" data-name="Ocean Duck" data-price="8">
-    <img src="https://i.imgur.com/6rjIh9v.png" alt="Ocean Duck">
-    <h2>Ocean Duck</h2>
-    <p>$8</p>
+
+  <div class="product" data-name="Crystal Duck" data-price="8.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07ae?auto=format&fit=crop&w=800&q=80" alt="Crystal Duck">
+    <h2>Crystal Duck</h2>
+    <p class="price">$8.00</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <div class="product" data-name="Emerald Duck" data-price="9.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07af?auto=format&fit=crop&w=800&q=80" alt="Emerald Duck">
+    <h2>Emerald Duck</h2>
+    <p class="price">$9.00</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <div class="product" data-name="Meteor Duck" data-price="7.50">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07b0?auto=format&fit=crop&w=800&q=80" alt="Meteor Duck">
+    <h2>Meteor Duck</h2>
+    <p class="price">$7.50</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <div class="product" data-name="Aqua Duck" data-price="5.50">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07b1?auto=format&fit=crop&w=800&q=80" alt="Aqua Duck">
+    <h2>Aqua Duck</h2>
+    <p class="price">$5.50</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <div class="product" data-name="Platinum Duck" data-price="12.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07b2?auto=format&fit=crop&w=800&q=80" alt="Platinum Duck">
+    <h2>Platinum Duck</h2>
+    <p class="price">$12.00</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+
+  <div class="product" data-name="Obsidian Duck" data-price="11.00">
+    <img src="https://images.unsplash.com/photo-1612831455541-23a5d98a07b3?auto=format&fit=crop&w=800&q=80" alt="Obsidian Duck">
+    <h2>Obsidian Duck</h2>
+    <p class="price">$11.00</p>
     <button onclick="addToCart(this)">Add to Cart</button>
   </div>
 </main>
 
-<div class="cart-popup" id="cart-popup">
-  <h3>Your Cart</h3>
-  <div id="cart-items"></div>
-  <p>Total: $<span id="cart-total">0.00</span></p>
-  <button onclick="checkout()">Purchase</button>
-  <button onclick="toggleCart()">Close</button>
-</div>
-
 <script>
-// RB Bucks and cart setup
+// Cart functionality
 let cart = [];
-let user = localStorage.getItem('rb_current_user') || 'Guest';
-let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
-if(!users[user]) users[user] = { balance: 100 };
-if(!users['rb_owner']) users['rb_owner'] = { balance: 0 };
-localStorage.setItem('rb_users', JSON.stringify(users));
 
 function addToCart(button){
   const product = button.closest('.product');
   const name = product.dataset.name;
   const price = parseFloat(product.dataset.price);
   cart.push({name, price});
-  updateCartDisplay();
+  alert(name + " added to cart!");
+  // Automatically deduct from current user balance
+  let walletUsers = JSON.parse(localStorage.getItem('duckUsers')) || {};
+  let currentUser = localStorage.getItem('duckCurrentUser');
+  if(currentUser && walletUsers[currentUser]){
+    if(walletUsers[currentUser].balance >= price){
+      walletUsers[currentUser].balance -= price;
+      walletUsers[currentUser].history.push({type:`Purchased ${name}`, amount:-price, time:new Date().toLocaleString()});
+      localStorage.setItem('duckUsers', JSON.stringify(walletUsers));
+      alert(`${name} purchased! Balance updated.`);
+    } else {
+      alert("Insufficient DuckCoins!");
+    }
+  }
 }
-
-function updateCartDisplay(){
-  const cartCount = document.getElementById('cart-count');
-  const cartItems = document.getElementById('cart-items');
-  const cartTotal = document.getElementById('cart-total');
-  cartCount.textContent = cart.length;
-  cartItems.innerHTML = "";
-  let total=0;
-  cart.forEach(item=>{
-    total+=item.price;
-    const div = document.createElement('div');
-    div.classList.add('cart-item');
-    div.innerHTML = `<span>${item.name}</span><span>$${item.price.toFixed(2)}</span>`;
-    cartItems.appendChild(div);
-  });
-  cartTotal.textContent = total.toFixed(2);
-}
-
-function toggleCart(){ document.getElementById('cart-popup').classList.toggle('active'); }
-
-function checkout(){
-  if(cart.length===0){ alert("Cart empty!"); return; }
-  users = JSON.parse(localStorage.getItem('rb_users'));
-  let total=cart.reduce((a,b)=>a+b.price,0);
-  if(users[user].balance<total){ alert("Insufficient RB Bucks!"); return; }
-  users[user].balance -= total;
-  users['rb_owner'].balance += total; // earnings automatically added to wallet
-  localStorage.setItem('rb_users', JSON.stringify(users));
-  alert(`Purchase successful! $${total.toFixed(2)} deducted from your RB Bucks.`);
-  cart=[];
-  updateCartDisplay();
-}
-
-setInterval(()=>{
-  users = JSON.parse(localStorage.getItem('rb_users'));
-},2000);
 </script>
 
 </body>
