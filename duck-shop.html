@@ -1,207 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Duck Shop</title>
 <style>
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #00cfff, #ffde00);
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
-h1 { margin: 20px 0; font-size: 3rem; color: #fff; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); }
-.balance-bar {
-  background: white;
-  border-radius: 15px;
-  padding: 15px 25px;
-  display: inline-block;
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #ff69b4;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-#filters { margin-bottom: 20px; }
-#filters select, #filters input {
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  margin: 0 5px;
-}
-.shop {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
-}
-.item {
-  background: white;
-  border-radius: 15px;
-  padding: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
-}
-.item:hover { transform: translateY(-5px); }
-.item img { width: 100%; border-radius: 10px; }
-.item h3 { margin: 10px 0 5px; }
-.item p { margin: 5px 0; font-weight: bold; color: #ff69b4; }
-button { background: #ff69b4; border: none; color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; margin-top: 5px; transition: 0.3s; }
-button:hover { background: #ff1493; }
-
-/* Cart section */
-#cart-section {
-  background: rgba(255,255,255,0.9);
-  margin: 30px auto;
-  padding: 20px;
-  max-width: 1000px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-#cart-section h2 { color: #ff69b4; }
-.cart-item { display: flex; align-items: center; margin: 15px 0; justify-content: space-between; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-.cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; }
-.cart-item-info { flex: 1; margin-left: 15px; text-align: left; }
+body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg,#a0e0ff,#fff); margin:0; text-align:center; color:#333; }
+header { background:#00bfff; color:white; padding:2rem; }
+main { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; padding:20px; max-width:1200px; margin:auto; }
+.product { background:white; border-radius:15px; text-align:center; padding:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+.product img { width:100px; height:100px; object-fit:cover; margin-bottom:10px; }
+button { cursor:pointer; padding:10px 15px; border-radius:10px; margin:5px; background:#00bfff; color:white; border:none; }
+button:hover { background:#0099e6; }
+.cart-popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); background:white; padding:20px; border-radius:15px; transition:0.3s; z-index:100; width:90%; max-width:500px; }
+.cart-popup.active { transform:translate(-50%,-50%) scale(1); }
+.cart-item { display:flex; justify-content:space-between; border-bottom:1px solid #ddd; padding:5px 0; }
+#cart-total { font-weight:bold; margin-top:10px; }
 </style>
 </head>
 <body>
 
-<h1>🦆 Duck Shop</h1>
-<div class="balance-bar">
-  User: <span id="username-display">Guest</span> | Balance: <span id="balance">0.00</span> RB Bucks
-</div>
+<header>
+  <h1>Duck Shop</h1>
+  <button onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
+</header>
 
-<div id="filters">
-  <select id="category-filter" onchange="filterItems()">
-    <option value="All">All Categories</option>
-    <option value="Fantasy">Fantasy Ducks</option>
-    <option value="Regular">Regular Ducks</option>
-    <option value="Special">Special Ducks</option>
-  </select>
-  <input type="text" id="search-bar" placeholder="Search Duck..." oninput="filterItems()">
-</div>
+<main id="product-list">
+  <!-- 20+ duck products -->
+  <div class="product" data-name="Galaxy Duck" data-price="5">
+    <img src="https://i.imgur.com/6w0I9j2.png" alt="Galaxy Duck">
+    <h2>Galaxy Duck</h2>
+    <p>$5</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="King Duck" data-price="10">
+    <img src="https://i.imgur.com/OoZblJq.png" alt="King Duck">
+    <h2>King Duck</h2>
+    <p>$10</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Fire Duck" data-price="8">
+    <img src="https://i.imgur.com/7vQx5Da.png" alt="Fire Duck">
+    <h2>Fire Duck</h2>
+    <p>$8</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Ice Duck" data-price="7">
+    <img src="https://i.imgur.com/Z7YQzZV.png" alt="Ice Duck">
+    <h2>Ice Duck</h2>
+    <p>$7</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Rainbow Duck" data-price="6">
+    <img src="https://i.imgur.com/5cLkQmX.png" alt="Rainbow Duck">
+    <h2>Rainbow Duck</h2>
+    <p>$6</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Gold Duck" data-price="15">
+    <img src="https://i.imgur.com/0RzTJfY.png" alt="Gold Duck">
+    <h2>Gold Duck</h2>
+    <p>$15</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Silver Duck" data-price="12">
+    <img src="https://i.imgur.com/2Cx1eHt.png" alt="Silver Duck">
+    <h2>Silver Duck</h2>
+    <p>$12</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Neon Duck" data-price="9">
+    <img src="https://i.imgur.com/UPq8DdL.png" alt="Neon Duck">
+    <h2>Neon Duck</h2>
+    <p>$9</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Zombie Duck" data-price="11">
+    <img src="https://i.imgur.com/mULCOzB.png" alt="Zombie Duck">
+    <h2>Zombie Duck</h2>
+    <p>$11</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Vampire Duck" data-price="13">
+    <img src="https://i.imgur.com/7dFQxHD.png" alt="Vampire Duck">
+    <h2>Vampire Duck</h2>
+    <p>$13</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Steampunk Duck" data-price="14">
+    <img src="https://i.imgur.com/h2vR1ZP.png" alt="Steampunk Duck">
+    <h2>Steampunk Duck</h2>
+    <p>$14</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Pirate Duck" data-price="12">
+    <img src="https://i.imgur.com/fhGQ4dL.png" alt="Pirate Duck">
+    <h2>Pirate Duck</h2>
+    <p>$12</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Cyber Duck" data-price="10">
+    <img src="https://i.imgur.com/WfM4EXO.png" alt="Cyber Duck">
+    <h2>Cyber Duck</h2>
+    <p>$10</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Firework Duck" data-price="9">
+    <img src="https://i.imgur.com/p9S6MPF.png" alt="Firework Duck">
+    <h2>Firework Duck</h2>
+    <p>$9</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Rainbow Ninja Duck" data-price="15">
+    <img src="https://i.imgur.com/xxrH3f1.png" alt="Rainbow Ninja Duck">
+    <h2>Rainbow Ninja Duck</h2>
+    <p>$15</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Crystal Duck" data-price="20">
+    <img src="https://i.imgur.com/4ZCJKwA.png" alt="Crystal Duck">
+    <h2>Crystal Duck</h2>
+    <p>$20</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Shadow Duck" data-price="18">
+    <img src="https://i.imgur.com/IU9zR7Q.png" alt="Shadow Duck">
+    <h2>Shadow Duck</h2>
+    <p>$18</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Lightning Duck" data-price="17">
+    <img src="https://i.imgur.com/2kF9aKf.png" alt="Lightning Duck">
+    <h2>Lightning Duck</h2>
+    <p>$17</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Forest Duck" data-price="6">
+    <img src="https://i.imgur.com/3iUyO5E.png" alt="Forest Duck">
+    <h2>Forest Duck</h2>
+    <p>$6</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+  <div class="product" data-name="Ocean Duck" data-price="8">
+    <img src="https://i.imgur.com/6rjIh9v.png" alt="Ocean Duck">
+    <h2>Ocean Duck</h2>
+    <p>$8</p>
+    <button onclick="addToCart(this)">Add to Cart</button>
+  </div>
+</main>
 
-<div class="shop" id="shop-items"></div>
-
-<div id="cart-section">
-  <h2>🛒 Cart</h2>
+<div class="cart-popup" id="cart-popup">
+  <h3>Your Cart</h3>
   <div id="cart-items"></div>
-  <p>Total: <span id="cart-total">0.00</span> RB Bucks</p>
+  <p>Total: $<span id="cart-total">0.00</span></p>
+  <button onclick="checkout()">Purchase</button>
+  <button onclick="toggleCart()">Close</button>
 </div>
 
 <script>
-let user = localStorage.getItem('rb_current_user');
+// RB Bucks and cart setup
+let cart = [];
+let user = localStorage.getItem('rb_current_user') || 'Guest';
 let users = JSON.parse(localStorage.getItem('rb_users') || '{}');
-let cart = JSON.parse(localStorage.getItem('rb_cart') || '[]');
+if(!users[user]) users[user] = { balance: 100 };
+if(!users['rb_owner']) users['rb_owner'] = { balance: 0 };
+localStorage.setItem('rb_users', JSON.stringify(users));
 
-const items = [
-  {name:'Golden Duck', price:50, img:'https://i.imgur.com/OdL0XPt.png', category:'Regular'},
-  {name:'Rubber Duck', price:20, img:'https://i.imgur.com/9YzZ6hK.png', category:'Regular'},
-  {name:'Duck Plush', price:35, img:'https://i.imgur.com/Ji5vZ3S.png', category:'Regular'},
-  {name:'Galaxy Duck', price:100, img:'https://i.imgur.com/ZlY1cM1.png', category:'Fantasy'},
-  {name:'King Duck', price:150, img:'https://i.imgur.com/3rY8uMC.png', category:'Fantasy'},
-  {name:'Rainbow Duck', price:75, img:'https://i.imgur.com/L5W1K1U.png', category:'Fantasy'},
-  {name:'Cyber Duck', price:120, img:'https://i.imgur.com/J9kNQ0c.png', category:'Fantasy'},
-  {name:'Pirate Duck', price:80, img:'https://i.imgur.com/3DxY3x5.png', category:'Special'},
-  {name:'Fire Duck', price:60, img:'https://i.imgur.com/w6y9r0K.png', category:'Special'},
-  {name:'Ice Duck', price:60, img:'https://i.imgur.com/j4Ud9kW.png', category:'Special'}
-];
-
-// Display balance
-function updateBalance() {
-  users = JSON.parse(localStorage.getItem('rb_users') || '{}');
-  if (user && users[user]) {
-    document.getElementById('username-display').textContent = user;
-    document.getElementById('balance').textContent = users[user].balance.toFixed(2);
-  }
+function addToCart(button){
+  const product = button.closest('.product');
+  const name = product.dataset.name;
+  const price = parseFloat(product.dataset.price);
+  cart.push({name, price});
+  updateCartDisplay();
 }
 
-// Render shop items
-function renderShop(filteredItems = items) {
-  const shopDiv = document.getElementById('shop-items');
-  shopDiv.innerHTML = '';
-  filteredItems.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.classList.add('item');
-    div.innerHTML = `
-      <img src="${item.img}" alt="${item.name}">
-      <h3>${item.name}</h3>
-      <p>${item.price.toFixed(2)} RB Bucks</p>
-      <button onclick="addToCart(${items.indexOf(item)})">Add to Cart</button>
-    `;
-    shopDiv.appendChild(div);
-  });
-}
-
-// Add to cart
-function addToCart(index) {
-  cart.push(items[index]);
-  localStorage.setItem('rb_cart', JSON.stringify(cart));
-  renderCart();
-}
-
-// Render cart
-function renderCart() {
-  const cartDiv = document.getElementById('cart-items');
-  cartDiv.innerHTML = '';
-  let total = 0;
-  cart.forEach((item, idx) => {
-    total += item.price;
+function updateCartDisplay(){
+  const cartCount = document.getElementById('cart-count');
+  const cartItems = document.getElementById('cart-items');
+  const cartTotal = document.getElementById('cart-total');
+  cartCount.textContent = cart.length;
+  cartItems.innerHTML = "";
+  let total=0;
+  cart.forEach(item=>{
+    total+=item.price;
     const div = document.createElement('div');
     div.classList.add('cart-item');
-    div.innerHTML = `
-      <img src="${item.img}" alt="${item.name}">
-      <div class="cart-item-info">
-        <strong>${item.name}</strong><br>
-        Price: ${item.price.toFixed(2)} RB Bucks
-      </div>
-      <button onclick="purchaseItem(${idx})">Purchase</button>
-    `;
-    cartDiv.appendChild(div);
+    div.innerHTML = `<span>${item.name}</span><span>$${item.price.toFixed(2)}</span>`;
+    cartItems.appendChild(div);
   });
-  document.getElementById('cart-total').textContent = total.toFixed(2);
+  cartTotal.textContent = total.toFixed(2);
 }
 
-// Purchase
-function purchaseItem(idx) {
-  if (!user || !users[user]) { alert("Please log in via RB Bucks first."); return; }
-  const item = cart[idx];
-  if (users[user].balance < item.price) { alert("Not enough RB Bucks!"); return; }
+function toggleCart(){ document.getElementById('cart-popup').classList.toggle('active'); }
 
-  users[user].balance -= item.price;
+function checkout(){
+  if(cart.length===0){ alert("Cart empty!"); return; }
+  users = JSON.parse(localStorage.getItem('rb_users'));
+  let total=cart.reduce((a,b)=>a+b.price,0);
+  if(users[user].balance<total){ alert("Insufficient RB Bucks!"); return; }
+  users[user].balance -= total;
+  users['rb_owner'].balance += total; // earnings automatically added to wallet
   localStorage.setItem('rb_users', JSON.stringify(users));
-  cart.splice(idx,1);
-  localStorage.setItem('rb_cart', JSON.stringify(cart));
-  updateBalance();
-  renderCart();
-  alert(`You purchased ${item.name} for ${item.price.toFixed(2)} RB Bucks!`);
+  alert(`Purchase successful! $${total.toFixed(2)} deducted from your RB Bucks.`);
+  cart=[];
+  updateCartDisplay();
 }
 
-// Filter items
-function filterItems() {
-  const category = document.getElementById('category-filter').value;
-  const search = document.getElementById('search-bar').value.toLowerCase();
-  const filtered = items.filter(item => 
-    (category==='All' || item.category===category) &&
-    item.name.toLowerCase().includes(search)
-  );
-  renderShop(filtered);
-}
-
-// Initialize
-window.onload = function() {
-  updateBalance();
-  renderShop();
-  renderCart();
-}
-
-// Auto-update balance
-setInterval(updateBalance, 2000);
+setInterval(()=>{
+  users = JSON.parse(localStorage.getItem('rb_users'));
+},2000);
 </script>
+
 </body>
 </html>
